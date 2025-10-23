@@ -102,24 +102,12 @@ async def main():
     AWEME_ID = '7557971418924502324'
     CURSOR = 0
     COUNT = 20
-    PRINT_RESULT = False
-    VERBOSE = False
 
     fetcher = CommentsFetcher()
     try:
         print(f"正在获取视频评论: {AWEME_ID}")
         result = await fetcher.fetch_comments(AWEME_ID, CURSOR, COUNT)
         simplified_result = simplify_comment_result(result)
-        if PRINT_RESULT:
-            print("\n" + "="*50)
-            print("原始结果 (Original Result):")
-            print("="*50)
-            import json
-            print(json.dumps(result, ensure_ascii=False, indent=2))
-            print("\n" + "="*50)
-            print("简化结果 (Simplified Result):")
-            print("="*50)
-            print(json.dumps(simplified_result, ensure_ascii=False, indent=2))
         original_file, simplified_file = fetcher.save_results(result, simplified_result)
         print(f"\n任务完成! (Task completed!)")
         if original_file:
@@ -148,17 +136,10 @@ async def main():
     except APIError as e:
         fetcher.logger.error(f"API错误: {e.message}")
         print(f"API错误: {e.message}")
-        if VERBOSE:
-            print(f"错误代码: {e.code}")
-            if e.context:
-                print(f"错误上下文: {e.context}")
         return 1
     except Exception as e:
         fetcher.logger.error(f"未知错误: {e}", exc_info=True)
         print(f"发生未知错误: {e}")
-        if VERBOSE:
-            import traceback
-            traceback.print_exc()
         return 1
 
 

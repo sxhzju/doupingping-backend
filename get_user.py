@@ -3,7 +3,6 @@
 
 import asyncio
 import sys
-import json
 from pathlib import Path
 import datetime
 
@@ -152,8 +151,6 @@ async def main():
     GENERATE_SIMPLIFIED = True
     SAVE_ORIGINAL = True
     SAVE_SIMPLIFIED = True
-    PRINT_RESULT = False
-    VERBOSE = False
 
     if not validate_sec_user_id(SEC_USER_ID):
         print(f"警告: 提供的sec_user_id '{SEC_USER_ID}' 可能不是有效格式")
@@ -169,14 +166,6 @@ async def main():
         print(f"正在获取用户资料: {SEC_USER_ID}")
         result = await fetcher.fetch_user_profile(SEC_USER_ID)
         simplified_result = fetcher.simplify_user_profile(result) if GENERATE_SIMPLIFIED else None
-
-        if PRINT_RESULT:
-            print("\n" + "="*50)
-            payload = simplified_result if simplified_result else result
-            label = "用户资料 (User Profile)" if simplified_result else "原始用户资料数据 (Raw User Profile Data)"
-            print(label + ":")
-            print("="*50)
-            print(json.dumps(payload, ensure_ascii=False, indent=2))
 
         original_file = simplified_file = None
         if SAVE_ORIGINAL or (SAVE_SIMPLIFIED and simplified_result):
@@ -222,18 +211,11 @@ async def main():
     except APIError as e:
         fetcher.logger.error(f"API错误: {e.message}")
         print(f"API错误: {e.message}")
-        if VERBOSE:
-            print(f"错误代码: {e.code}")
-            if e.context:
-                print(f"错误上下文: {e.context}")
         return 1
 
     except Exception as e:
         fetcher.logger.error(f"未知错误: {e}", exc_info=True)
         print(f"发生未知错误: {e}")
-        if VERBOSE:
-            import traceback
-            traceback.print_exc()
         return 1
 
 

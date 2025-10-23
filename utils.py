@@ -901,6 +901,31 @@ class DouyinWebCrawler:
             response = await crawler.fetch_get_json(endpoint)
         return response
 
+    async def fetch_video_data(self, aweme_id: str):
+        kwargs = self.get_douyin_headers()
+        base_crawler = BaseCrawler(proxies=kwargs['proxies'], crawler_headers=kwargs['headers'])
+        async with base_crawler as crawler:
+            from urllib.parse import urlencode
+            from constants import DeviceConfig, APIEndpoints
+            headers = kwargs['headers']
+            params = DeviceConfig.get_device_info()
+            params['aweme_id'] = aweme_id
+
+            # The endpoint for video details
+            endpoint = "https://www.douyin.com/aweme/v1/web/aweme/detail/"
+
+            # Generate the a_bogus signature using BogusManager from utils.py
+            # The ab_model_2_endpoint in utils.py handles the full logic including URL encoding
+            a_bogus = BogusManager.ab_model_2_endpoint(params, headers["User-Agent"])
+
+            # Construct the final URL
+            query_string = urlencode(params)
+            full_url = f"{endpoint}?{query_string}&a_bogus={a_bogus}"
+            
+            self.logger.info(f'获取视频数据: aweme_id={aweme_id}')
+            response = await crawler.fetch_get_json(full_url)
+        return response
+
 def simplify_comment_result(result: dict) -> dict:
     utc8_tz = datetime.timezone(datetime.timedelta(hours=TimezoneConstants.UTC8_OFFSET_HOURS))
     extracted_comments = []

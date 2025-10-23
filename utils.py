@@ -11,6 +11,8 @@ import hashlib
 import logging
 from typing import Union, Any
 import datetime
+from urllib.parse import urlencode, quote
+
 try:
     import httpx
 except ImportError:
@@ -380,7 +382,6 @@ class ABogus:
 
     def generate_string_2_list(self, url_params: str, method='GET', start_time=0, end_time=0) -> list:
         import random as random_module
-        start_time = start_time or int
         start_time = start_time or int(time.time() * 1000)
         end_time = end_time or start_time + random_module.randint(4, 8)
         params_array = self.generate_params_code(url_params)

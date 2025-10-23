@@ -148,7 +148,6 @@ class UserProfileFetcher:
 async def main():
     """Run default user profile download."""
     SEC_USER_ID = "MS4wLjABAAAAW9FWcqS7RdQAWPd2AA5fL_ilmqsIFUCQ_Iym6Yh9_cUa6ZRqVLjVQSUjlHrfXY1Y"
-    GENERATE_SIMPLIFIED = True
     SAVE_ORIGINAL = True
     SAVE_SIMPLIFIED = True
 
@@ -161,11 +160,12 @@ async def main():
             return 1
 
     fetcher = UserProfileFetcher()
+    logger = fetcher.logger
 
     try:
-        print(f"正在获取用户资料: {SEC_USER_ID}")
+        logger.info(f"正在获取用户资料: {SEC_USER_ID}")
         result = await fetcher.fetch_user_profile(SEC_USER_ID)
-        simplified_result = fetcher.simplify_user_profile(result) if GENERATE_SIMPLIFIED else None
+        simplified_result = fetcher.simplify_user_profile(result)
 
         original_file = simplified_file = None
         if SAVE_ORIGINAL or (SAVE_SIMPLIFIED and simplified_result):
@@ -176,46 +176,49 @@ async def main():
                 save_simplified=SAVE_SIMPLIFIED and simplified_result is not None,
             )
 
-        print(f"\n任务完成! (Task completed!)")
+        summary_lines = ["任务完成! (Task completed!)"]
         if original_file:
-            print(f"原始用户资料文件: {original_file}")
+            summary_lines.append(f"原始用户资料文件: {original_file}")
         if simplified_file:
-            print(f"简化用户资料文件: {simplified_file}")
+            summary_lines.append(f"简化用户资料文件: {simplified_file}")
 
         summary_source = simplified_result if simplified_result else result.get('user') or {}
         if summary_source:
             age_value = summary_source.get('age', 'N/A') if simplified_result else summary_source.get('user_age', 'N/A')
-            print(f"\n用户信息摘要 (User Information Summary):")
-            print(f"  昵称: {summary_source.get('nickname', 'N/A')}")
-            print(f"  抖音号: {summary_source.get('unique_id', 'N/A')}")
-            print(f"  性别: {summary_source.get('gender', 'N/A')}")
-            print(f"  年龄: {age_value}")
-            print(f"  个性签名: {summary_source.get('signature', 'N/A')}")
-            print(f"  作品数: {summary_source.get('aweme_count', 0)}")
-            print(f"  关注数: {summary_source.get('following_count', 0)}")
-            print(f"  粉丝数: {summary_source.get('follower_count', 0)}")
-            print(f"  获赞数: {summary_source.get('total_favorited', 0)}")
+            summary_lines.append("")
+            summary_lines.append("用户信息摘要 (User Information Summary):")
+            summary_lines.append(f"  昵称: {summary_source.get('nickname', 'N/A')}")
+            summary_lines.append(f"  抖音号: {summary_source.get('unique_id', 'N/A')}")
+            summary_lines.append(f"  性别: {summary_source.get('gender', 'N/A')}")
+            summary_lines.append(f"  年龄: {age_value}")
+            summary_lines.append(f"  个性签名: {summary_source.get('signature', 'N/A')}")
+            summary_lines.append(f"  作品数: {summary_source.get('aweme_count', 0)}")
+            summary_lines.append(f"  关注数: {summary_source.get('following_count', 0)}")
+            summary_lines.append(f"  粉丝数: {summary_source.get('follower_count', 0)}")
+            summary_lines.append(f"  获赞数: {summary_source.get('total_favorited', 0)}")
+
+        for line in summary_lines:
+            if line:
+                logger.info(line)
+        print("\n".join(summary_lines))
 
         return 0
 
     except KeyboardInterrupt:
-        fetcher.logger.info("用户中断操作")
-        print("\n操作被用户中断 (Operation interrupted by user)")
+        logger.warning("用户中断操作")
+        logger.warning("操作被用户中断 (Operation interrupted by user)")
         return 1
 
     except ValueError as e:
-        fetcher.logger.error(f"参数错误: {e}")
-        print(f"参数错误: {e}")
+        logger.error(f"参数错误: {e}")
         return 1
 
     except APIError as e:
-        fetcher.logger.error(f"API错误: {e.message}")
-        print(f"API错误: {e.message}")
+        logger.error(f"API错误: {e.message}")
         return 1
 
     except Exception as e:
-        fetcher.logger.error(f"未知错误: {e}", exc_info=True)
-        print(f"发生未知错误: {e}")
+        logger.error(f"未知错误: {e}", exc_info=True)
         return 1
 
 

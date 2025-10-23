@@ -104,42 +104,51 @@ async def main():
     COUNT = 20
 
     fetcher = CommentsFetcher()
+    logger = fetcher.logger
     try:
-        print(f"正在获取视频评论: {AWEME_ID}")
+        logger.info(f"正在获取视频评论: {AWEME_ID}")
         result = await fetcher.fetch_comments(AWEME_ID, CURSOR, COUNT)
         simplified_result = simplify_comment_result(result)
         original_file, simplified_file = fetcher.save_results(result, simplified_result)
-        print(f"\n任务完成! (Task completed!)")
+
+        summary_lines = ["任务完成! (Task completed!)"]
         if original_file:
-            print(f"原始数据文件: {original_file}")
+            summary_lines.append(f"原始数据文件: {original_file}")
         if simplified_file:
-            print(f"简化数据文件: {simplified_file}")
+            summary_lines.append(f"简化数据文件: {simplified_file}")
+
         total_comments = len(result.get('comments', []))
         has_more = result.get('has_more', False)
         next_cursor = result.get('cursor', 0)
-        print(f"\n统计信息 (Statistics):")
-        print(f"  获取评论数量: {total_comments}")
-        print(f"  是否有更多: {'是' if has_more else '否'}")
-        print(f"  下一页游标: {next_cursor}")
+        summary_lines.append("")
+        summary_lines.append("统计信息 (Statistics):")
+        summary_lines.append(f"  获取评论数量: {total_comments}")
+        summary_lines.append(f"  是否有更多: {'是' if has_more else '否'}")
+        summary_lines.append(f"  下一页游标: {next_cursor}")
         if has_more:
-            print(f"\n获取下一页 (To get the next page):")
-            print(f"  请在 get_comments.py 脚本的 main 函数中，将 CURSOR 的值修改为 {next_cursor}，然后重新运行。")
+            summary_lines.append("")
+            summary_lines.append("获取下一页 (To get the next page):")
+            summary_lines.append(
+                f"  请在 get_comments.py 脚本的 main 函数中，将 CURSOR 的值修改为 {next_cursor}，然后重新运行。"
+            )
+
+        for line in summary_lines:
+            if line:
+                logger.info(line)
+        print("\n".join(summary_lines))
         return 0
     except KeyboardInterrupt:
-        fetcher.logger.info("用户中断操作")
-        print("\n操作被用户中断 (Operation interrupted by user)")
+        logger.warning("用户中断操作")
+        logger.warning("操作被用户中断 (Operation interrupted by user)")
         return 1
     except ValueError as e:
-        fetcher.logger.error(f"参数错误: {e}")
-        print(f"参数错误: {e}")
+        logger.error(f"参数错误: {e}")
         return 1
     except APIError as e:
-        fetcher.logger.error(f"API错误: {e.message}")
-        print(f"API错误: {e.message}")
+        logger.error(f"API错误: {e.message}")
         return 1
     except Exception as e:
-        fetcher.logger.error(f"未知错误: {e}", exc_info=True)
-        print(f"发生未知错误: {e}")
+        logger.error(f"未知错误: {e}", exc_info=True)
         return 1
 
 

@@ -8,8 +8,6 @@ Constants module for Douyin crawler
 """
 
 # ==================== Cookie配置 (Cookie Configuration) ====================
-# 重要：请将此Cookie替换为您自己的Cookie
-# Important: Replace this Cookie with your own Cookie
 DOUYIN_COOKIE = "enter_pc_once=1; UIFID_TEMP=30ff7b230d01f3ed4fd5546706fc508e0725b8a99e0ba4197a991a959864baf0c2b6ee65e651b24b04b65361253a72930baacb599ba60e80717e48c4b64eea230f7466e6ab8914083e966461e0e47f46f035734fa99bfe2f4c02ad1d66dded58d97c15241b55d8b69643ffa152dddbbd; s_v_web_id=verify_mg57aqn9_kgoRuDBt_ygpr_4L9z_8TaQ_uw9fC4FbipAw; hevc_supported=true; dy_swidth=2048; dy_sheight=1152; fpk1=U2FsdGVkX19Zf5Y9a5Z6xm/Z2XEPV4W7UPW/G9hIabS1YD1ATq14PE0guJovnD8q9CMKAGxqZFBtFfz/FoMGFg==; fpk2=7ceed19ee5ebdbf792f56329591ffc53; xgplayer_user_id=332989463482; passport_csrf_token=257b54f6b42856d7f2d79777699be4c2; passport_csrf_token_default=257b54f6b42856d7f2d79777699be4c2; __security_mc_1_s_sdk_crypt_sdk=60fdab15-4cc7-b40b; bd_ticket_guard_client_web_domain=2; d_ticket=98dfef85ffb46558bdef5b74c17c410d80bd0; n_mh=rZbLvuXyRyiN7VCxvrqeeK_L419A7HUwPpGO0twgduE; passport_auth_status=2dce8d3d7372dc854af63159c690e9c1%2C; passport_auth_status_ss=2dce8d3d7372dc854af63159c690e9c1%2C; is_staff_user=false; __security_mc_1_s_sdk_cert_key=6037c304-45e7-b575; __security_server_data_status=1; UIFID=30ff7b230d01f3ed4fd5546706fc508e0725b8a99e0ba4197a991a959864baf0c2b6ee65e651b24b04b65361253a72930baacb599ba60e80717e48c4b64eea23f4e261dee374115c21f380ffa1130bc4f934694441d1fa0421b8787e44490cf36903d5fe5376f56fbf346d23c0b5ca0f7ea7772253ab9cf5317c7f49a1251c07ddf55b465fd466d5cde7190afe27832bee6bcefe1c8e8dff88ebd776fbecd654d541ee0c808c6fec3d54fd784f15861a; SelfTabRedDotControl=%5B%5D; is_dash_user=1; live_use_vvc=%22false%22; xgplayer_device_id=88360542820; download_guide=%220%2F%2F1%22; SEARCH_RESULT_LIST_TYPE=%22single%22; __druidClientInfo=JTdCJTIyY2xpZW50V2lkdGglMjIlM0E0NDYlMkMlMjJjbGllbnRIZWlnaHQlMjIlM0E4NzglMkMlMjJ3aWR0aCUyMiUzQTQ0NiUyQyUyMmhlaWdodCUyMiUzQTg3OCUyQyUyMmRldmljZVBpeGVsUmF0aW8lMjIlM0ExLjI1JTJDJTIydXNlckFnZW50JTIyJTNBJTIyTW96aWxsYSUyRjUuMCUyMChXaW5kb3dzJTIwTlQlMjAxMC4wJTNCJTIwV2luNjQlM0IlMjB4NjQpJTIwQXBwbGVXZWJLaXQlMkY1MzcuMzYlMjAoS0hUTUwlMkMlMjBsaWtlJTIwR2Vja28pJTIwQ2hyb21lJTJGMTQxLjAuMC4wJTIwU2FmYXJpJTJGNTM3LjM2JTIwRWRnJTJGMTQxLjAuMC4wJTIyJTdE; passport_mfa_token=CjUdfkbDCgppjiMmg0eC0IJsNm5K3Dm9pQiTEPQB52oLlinjJwAUnFFAQtMkCu43kk3b7CTANxpKCjwAAAAAAAAAAAAAT4%2B0hI8h2X%2FNfmFUpJNlq0U0opEHk1K896%2Bq9OU%2F3%2F1WT1ImFccrNuUObfmqa00Y%2FWsQnor%2BDRj2sdFsIAIiAQOtHxXi; _bd_ticket_crypt_doamin=2; publish_badge_show_info=%220%2C0%2C0%2C1759760299993%22; FOLLOW_LIVE_POINT_INFO=%22MS4wLjABAAAANtsQjkSYWEdApIe1ypmMPTZTdVKmpjZiFVruqCdGaus%2F1759852800000%2F0%2F0%2F1759819955636%22; FOLLOW_NUMBER_YELLOW_POINT_INFO=%22MS4wLjABAAAANtsQjkSYWEdApIe1ypmMPTZTdVKmpjZiFVruqCdGaus%2F1759852800000%2F0%2F1759819355636%2F0%22; shareRecommendGuideTagCount=4; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.3%7D; douyin.com; device_web_cpu_core=32; device_web_memory_size=8; architecture=amd64; strategyABtestKey=%221759985531.168%22; WallpaperGuide=%7B%22showTime%22%3A0%2C%22closeTime%22%3A0%2C%22showCount%22%3A0%2C%22cursor1%22%3A134%2C%22cursor2%22%3A44%2C%22hoverTime%22%3A1759155464817%7D; __ac_nonce=068e747e9000dfe4a5d84; __ac_signature=_02B4Z6wo00f016iASNgAAIDC0mm8P0XZQLuooExAAILP74; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A2048%2C%5C%22screen_height%5C%22%3A1152%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A32%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22; xg_device_score=7.939512605042016; passport_assist_user=Cj1Ir0Xw4lvpv5NhxMfSGYgpMX9EuMBASYvCg2BsuhN2kf5GSvqSNfaLNnz4zzaStO4r7u0NO15hiymw7ImrGkoKPAAAAAAAAAAAAABPktbq-dwSMsHd3HYIx-VML__vh3SU4djgdxtk2yMxKwPPItTwClVezB14EnNQClAKfxCkrP4NGImv1lQgASIBA8iZ4GY%3D; sid_guard=11e496d5b59eadafcc7b729921474b91%7C1759987705%7C5184000%7CMon%2C+08-Dec-2025+05%3A28%3A25+GMT; uid_tt=78d9ff3dade671c84c96de381e1e69a9; uid_tt_ss=78d9ff3dade671c84c96de381e1e69a9; sid_tt=11e496d5b59eadafcc7b729921474b91; sessionid=11e496d5b59eadafcc7b729921474b91; sessionid_ss=11e496d5b59eadafcc7b729921474b91; sid_ucp_v1=1.0.0-KDk0MDc0MTUxMmFmMmY1ZDBmMmRmOGY4ODdkZTQ5MjAzM2MyZTY5ZjMKHwidlv3xmgMQ-Y-dxwYY7zEgDDC2rfrhBTgFQPsHSAQaAmxxIiAxMWU0OTZkNWI1OWVhZGFmY2M3YjcyOTkyMTQ3NGI5MQ; ssid_ucp_v1=1.0.0-KDk0MDc0MTUxMmFmMmY1ZDBmMmRmOGY4ODdkZTQ5MjAzM2MyZTY5ZjMKHwidlv3xmgMQ-Y-dxwYY7zEgDDC2rfrhBTgFQPsHSAQaAmxxIiAxMWU0OTZkNWI1OWVhZGFmY2M3YjcyOTkyMTQ3NGI5MQ; login_time=1759987705098; __security_mc_1_s_sdk_sign_data_key_web_protect=8b180b1d-4cd6-b00b; _bd_ticket_crypt_cookie=b800cdd1451b806e44db7e11886bdf1f; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCQmptMXZERkVCUmlPMEMvV0lDN1ltM0VIZDJTTThFbGZlTnJkcDV6QXFjQlE5WEI3STN4emlVdllHRUs4ZjFibFZ3Um9DY1dFU0F3OU90NnRTWWdlTHc9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoyfQ%3D%3D; home_can_add_dy_2_desktop=%221%22; ttwid=1%7Cxm-jRBUSuMnlqfRjc15ZcDvRH3PeaSgx4RXFIo9WfM8%7C1759987712%7C7e6afa2ac4a7f882e747b559b2e51a031d756f8e2611b0a180a6a10707fc5d7c; odin_tt=89732f374811be8ec41a10b8eed4e052bc21d059d2c8aac67748fcfad56a25676a44dcd62a2fa3bee578b8a9891aaa0a23c490fb3b51219514f0e4f5a4320112; biz_trace_id=6c7dc112; session_tlb_tag=sttt%7C16%7CEeSW1bWera_Me3KZIUdLkf_________QE7IrUaR1qiLC9WfaGErjqHV1Ha32825wLEv-WhU8LEc%3D; playRecommendGuideTagCount=6; totalRecommendGuideTagCount=35; bd_ticket_guard_client_data_v2=eyJyZWVfcHVibGljX2tleSI6IkJCam0xdkRGRUJSaU8wQy9XSUM3WW0zRUhkMlNNOEVsZmVOcmRwNXpBcWNCUTlYQjdJM3h6aVV2WUdFSzhmMWJsVndSb0NjV0VTQXc5T3Q2dFNZZ2VMdz0iLCJ0c19zaWduIjoidHMuMi5hNTc5YzEwODRlZjkwNTFiYWI0OTZkODNmN2VjMjMxM2I0NjY5MjNmN2ZjYmY5ZmYzYmVhNDg3MTZlZGRhYmRhYzRmYmU4N2QyMzE5Y2YwNTMxODYyNGNlZGExNDkxMWNhNDA2ZGVkYmViZWRkYjJlMzBmY2U4ZDRmYTAyNTc1ZCIsInJlcV9jb250ZW50Ijoic2VjX3RzIiwicmVxX3NpZ24iOiJTMmVBTnlKN0ZhcXdBTU1sNC9QYTljdUNoSXk5UzlZaGJFd2hQMWZLU0ZFPSIsInNlY190cyI6IiMrS29Kb3o0V0V0WFlQaGJKKzc0NUVjakRSY0xaYWk1UkFnWmg4aVVOQTlEaU9OQUhLU09CK081d1ZZT1UifQ%3D%3D; stream_player_status_params=%22%7B%5C%22is_auto_play%5C%22%3A0%2C%5C%22is_full_screen%5C%22%3A0%2C%5C%22is_full_webscreen%5C%22%3A0%2C%5C%22is_mute%5C%22%3A0%2C%5C%22is_speed%5C%22%3A1%2C%5C%22is_visible%5C%22%3A1%7D%22; IsDouyinActive=true"
 
 # ==================== 网络配置 (Network Configuration) ====================
@@ -174,13 +172,10 @@ class PaginationConfig:
 class LoggingConfig:
     """日志配置类"""
     # 日志级别 (Log Level)
-    LEVEL = "WARNING"  # 可选: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    LEVEL = "INFO"  # 可选: DEBUG, INFO, WARNING, ERROR, CRITICAL
     
     # 日志目录 (Log Directory)
     LOG_DIR = "logs"
-    
-    # 日志文件名 (Log File Name)
-    LOG_FILE = "douyin_crawler.log"
     
     # 日志格式 (Log Format)
     FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s"
@@ -246,7 +241,10 @@ class OutputConfig:
     # 文件名配置 (File Name Configuration)
     COMMENT_ORIGINAL_FILE = "comment_original.json"
     COMMENT_SIMPLIFIED_FILE = "comment_simplified.json"
-    USER_PROFILE_FILE = "user_profile.json"
+    USER_ORIGINAL_FILE = "user_original.json"
+    USER_SIMPLIFIED_FILE = "user_simplified.json"
+    VIDEO_ORIGINAL_FILE = "video_original.json"
+    VIDEO_SIMPLIFIED_FILE = "video_simplified.json"
     
     # 输出格式配置 (Output Format Configuration)
     INDENT = 2
@@ -341,28 +339,18 @@ class TimezoneConstants:
 
 # ==================== 文件路径常量 (File Path Constants) ====================
 class FilePaths:
-    """文件路径常量类"""
+    """文件路径常量类（兼容旧引用，复用 OutputConfig 配置）"""
     
     # 日志目录 (Log Directory)
     DEFAULT_LOG_DIR = "logs"
     
     # 输出文件 (Output Files)
-    COMMENT_ORIGINAL_FILE = "comment_original.json"
-    COMMENT_SIMPLIFIED_FILE = "comment_simplified.json"
-    USER_PROFILE_FILE = "user_profile.json"
-
-
-# ==================== 开发配置 (Development Configuration) ====================
-class DevelopmentConfig:
-    """开发配置类"""
-    # 调试模式 (Debug Mode)
-    DEBUG = False
-    
-    # 详细输出 (Verbose Output)
-    VERBOSE = False
-    
-    # 跳过签名验证 (Skip Signature Verification) - 仅用于测试
-    SKIP_SIGNATURE = False
+    COMMENT_ORIGINAL_FILE = OutputConfig.COMMENT_ORIGINAL_FILE
+    COMMENT_SIMPLIFIED_FILE = OutputConfig.COMMENT_SIMPLIFIED_FILE
+    USER_ORIGINAL_FILE = OutputConfig.USER_ORIGINAL_FILE
+    USER_SIMPLIFIED_FILE = OutputConfig.USER_SIMPLIFIED_FILE
+    VIDEO_ORIGINAL_FILE = OutputConfig.VIDEO_ORIGINAL_FILE
+    VIDEO_SIMPLIFIED_FILE = OutputConfig.VIDEO_SIMPLIFIED_FILE
 
 
 # ==================== 默认配置常量 (Default Configuration Constants) ====================
@@ -494,8 +482,3 @@ class LoggingConstants:
     DEFAULT_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     DETAILED_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s"
     
-    # 日志文件配置 (Log File Configuration)
-    DEFAULT_LOG_DIR = "logs"
-    DEFAULT_LOG_FILE = "douyin_crawler.log"
-    DEFAULT_MAX_BYTES = 10 * 1024 * 1024  # 10MB
-    DEFAULT_BACKUP_COUNT = 5

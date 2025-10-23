@@ -52,7 +52,69 @@ class ConfigManager:
     def _get_default_config(self) -> dict:
         headers = HeadersConfig.get_headers()
         headers['Cookie'] = DOUYIN_COOKIE
-        return {'network': {'timeout': NetworkConfig.TIMEOUT, 'max_retries': NetworkConfig.MAX_RETRIES, 'max_connections': NetworkConfig.MAX_CONNECTIONS, 'max_keepalive_connections': NetworkConfig.MAX_KEEPALIVE_CONNECTIONS, 'max_tasks': NetworkConfig.MAX_TASKS, 'proxies': {'http': NetworkConfig.HTTP_PROXY, 'https': NetworkConfig.HTTPS_PROXY}}, 'headers': headers, 'device': DeviceConfig.get_device_info(), 'api': {'douyin_domain': APIEndpoints.DOUYIN_DOMAIN, 'iesdouyin_domain': APIEndpoints.IESDOUYIN_DOMAIN, 'live_domain': APIEndpoints.LIVE_DOMAIN, 'live_domain2': APIEndpoints.LIVE_DOMAIN2, 'sso_domain': APIEndpoints.SSO_DOMAIN, 'webcast_wss_domain': APIEndpoints.WEBCAST_WSS_DOMAIN, 'endpoints': {'post_comment': '/aweme/v1/web/comment/list/', 'user_detail': '/aweme/v1/web/user/profile/other/', 'ms_token': APIEndpoints.MS_TOKEN_URL, 'ttwid': APIEndpoints.TTWID_URL}}, 'pagination': {'default_cursor': DefaultConfig.DEFAULT_CURSOR, 'default_count': DefaultConfig.DEFAULT_COUNT}, 'logging': {'level': LoggingConfig.LEVEL, 'log_dir': LoggingConfig.LOG_DIR, 'log_file': LoggingConfig.LOG_FILE, 'format': LoggingConfig.FORMAT, 'max_bytes': LoggingConfig.MAX_BYTES, 'backup_count': LoggingConfig.BACKUP_COUNT, 'console_output': LoggingConfig.CONSOLE_OUTPUT, 'console_level': LoggingConfig.CONSOLE_LEVEL}, 'output': {'save_original': OutputConfig.SAVE_ORIGINAL, 'save_simplified': OutputConfig.SAVE_SIMPLIFIED, 'comment_original_file': OutputConfig.COMMENT_ORIGINAL_FILE, 'comment_simplified_file': OutputConfig.COMMENT_SIMPLIFIED_FILE, 'user_profile_file': OutputConfig.USER_PROFILE_FILE, 'indent': OutputConfig.INDENT, 'ensure_ascii': OutputConfig.ENSURE_ASCII}, 'validation': {'sec_user_id': {'min_length': ValidationConfig.SEC_USER_ID_MIN_LENGTH, 'pattern': ValidationConfig.SEC_USER_ID_PATTERN}, 'aweme_id': {'pattern': ValidationConfig.AWEME_ID_PATTERN}}}
+        return {
+            'network': {
+                'timeout': NetworkConfig.TIMEOUT,
+                'max_retries': NetworkConfig.MAX_RETRIES,
+                'max_connections': NetworkConfig.MAX_CONNECTIONS,
+                'max_keepalive_connections': NetworkConfig.MAX_KEEPALIVE_CONNECTIONS,
+                'max_tasks': NetworkConfig.MAX_TASKS,
+                'proxies': {
+                    'http': NetworkConfig.HTTP_PROXY,
+                    'https': NetworkConfig.HTTPS_PROXY,
+                },
+            },
+            'headers': headers,
+            'device': DeviceConfig.get_device_info(),
+            'api': {
+                'douyin_domain': APIEndpoints.DOUYIN_DOMAIN,
+                'iesdouyin_domain': APIEndpoints.IESDOUYIN_DOMAIN,
+                'live_domain': APIEndpoints.LIVE_DOMAIN,
+                'live_domain2': APIEndpoints.LIVE_DOMAIN2,
+                'sso_domain': APIEndpoints.SSO_DOMAIN,
+                'webcast_wss_domain': APIEndpoints.WEBCAST_WSS_DOMAIN,
+                'endpoints': {
+                    'post_comment': '/aweme/v1/web/comment/list/',
+                    'user_detail': '/aweme/v1/web/user/profile/other/',
+                    'ms_token': APIEndpoints.MS_TOKEN_URL,
+                    'ttwid': APIEndpoints.TTWID_URL,
+                },
+            },
+            'pagination': {
+                'default_cursor': DefaultConfig.DEFAULT_CURSOR,
+                'default_count': DefaultConfig.DEFAULT_COUNT,
+            },
+            'logging': {
+                'level': LoggingConfig.LEVEL,
+                'log_dir': LoggingConfig.LOG_DIR,
+                'format': LoggingConfig.FORMAT,
+                'max_bytes': LoggingConfig.MAX_BYTES,
+                'backup_count': LoggingConfig.BACKUP_COUNT,
+                'console_output': LoggingConfig.CONSOLE_OUTPUT,
+                'console_level': LoggingConfig.CONSOLE_LEVEL,
+            },
+            'output': {
+                'save_original': OutputConfig.SAVE_ORIGINAL,
+                'save_simplified': OutputConfig.SAVE_SIMPLIFIED,
+                'comment_original_file': OutputConfig.COMMENT_ORIGINAL_FILE,
+                'comment_simplified_file': OutputConfig.COMMENT_SIMPLIFIED_FILE,
+                'user_original_file': OutputConfig.USER_ORIGINAL_FILE,
+                'user_simplified_file': OutputConfig.USER_SIMPLIFIED_FILE,
+                'video_original_file': OutputConfig.VIDEO_ORIGINAL_FILE,
+                'video_simplified_file': OutputConfig.VIDEO_SIMPLIFIED_FILE,
+                'indent': OutputConfig.INDENT,
+                'ensure_ascii': OutputConfig.ENSURE_ASCII,
+            },
+            'validation': {
+                'sec_user_id': {
+                    'min_length': ValidationConfig.SEC_USER_ID_MIN_LENGTH,
+                    'pattern': ValidationConfig.SEC_USER_ID_PATTERN,
+                },
+                'aweme_id': {
+                    'pattern': ValidationConfig.AWEME_ID_PATTERN,
+                },
+            },
+        }
 
     def get_config_value(self, key: str, default=None) -> Any:
         if self._config is None:
@@ -926,6 +988,73 @@ class DouyinWebCrawler:
             response = await crawler.fetch_get_json(full_url)
         return response
 
+def simplify_video_result(result: dict) -> dict:
+    utc8_tz = datetime.timezone(datetime.timedelta(hours=TimezoneConstants.UTC8_OFFSET_HOURS))
+    try:
+        aweme_detail = result.get('aweme_detail') or {}
+        if not aweme_detail:
+            return {}
+
+        publish_timestamp = aweme_detail.get('create_time')
+        publish_time_str = None
+        if publish_timestamp:
+            publish_time_str = datetime.datetime.fromtimestamp(publish_timestamp, tz=utc8_tz).strftime(TimezoneConstants.DATETIME_FORMAT)
+
+        response_timestamp_ms = result.get('extra', {}).get('now')
+        response_time_str = None
+        if response_timestamp_ms:
+            response_time_str = datetime.datetime.fromtimestamp(response_timestamp_ms / 1000, tz=utc8_tz).strftime(TimezoneConstants.DATETIME_FORMAT)
+
+        author_info = aweme_detail.get('author') or {}
+        stats_info = aweme_detail.get('statistics') or {}
+        music_info = aweme_detail.get('music') or {}
+        video_info = aweme_detail.get('video') or {}
+
+        cover_urls = []
+        cover_data = video_info.get('cover')
+        if isinstance(cover_data, dict):
+            cover_urls = cover_data.get('url_list', []) or []
+
+        music_cover_urls = []
+        music_cover_data = music_info.get('cover_medium')
+        if isinstance(music_cover_data, dict):
+            music_cover_urls = music_cover_data.get('url_list', []) or []
+
+        return {
+            'aweme_id': aweme_detail.get('aweme_id'),
+            'title': aweme_detail.get('desc'),
+            'region': aweme_detail.get('region'),
+            'duration_ms': aweme_detail.get('duration'),
+            'publish_time': publish_timestamp,
+            'publish_time_utc8': publish_time_str,
+            'response_time': response_timestamp_ms,
+            'response_time_utc8': response_time_str,
+            'author': {
+                'nickname': author_info.get('nickname'),
+                'unique_id': author_info.get('unique_id'),
+                'sec_uid': author_info.get('sec_uid'),
+                'uid': author_info.get('uid'),
+            },
+            'statistics': {
+                'play_count': stats_info.get('play_count'),
+                'digg_count': stats_info.get('digg_count'),
+                'comment_count': stats_info.get('comment_count'),
+                'share_count': stats_info.get('share_count'),
+                'forward_count': stats_info.get('forward_count'),
+            },
+            'music': {
+                'title': music_info.get('title'),
+                'author': music_info.get('author'),
+                'cover_urls': music_cover_urls,
+            },
+            'cover_urls': cover_urls,
+            'share_url': aweme_detail.get('share_info', {}).get('share_url'),
+        }
+    except Exception as exc:
+        logger = LoggerManager.setup_logger('DataProcessor')
+        logger.error(f'简化视频数据时发生错误: {exc}', exc_info=True)
+        return {}
+
 def simplify_comment_result(result: dict) -> dict:
     utc8_tz = datetime.timezone(datetime.timedelta(hours=TimezoneConstants.UTC8_OFFSET_HOURS))
     extracted_comments = []
@@ -985,4 +1114,4 @@ def create_output_filename(base_name: str, extension: str='json', add_timestamp:
         return f'{base_name}_{timestamp}.{extension}'
     else:
         return f'{base_name}.{extension}'
-__all__ = ['ConfigManager', 'LoggerManager', 'APIError', 'APIConnectionError', 'APIResponseError', 'APITimeoutError', 'APIUnavailableError', 'APIUnauthorizedError', 'APINotFoundError', 'APIRateLimitError', 'APIRetryExhaustedError', 'TokenManager', 'VerifyFpManager', 'XBogus', 'ABogus', 'BogusManager', 'BaseRequestModel', 'PostComments', 'UserProfile', 'BaseCrawler', 'DouyinWebCrawler', 'simplify_comment_result', 'save_json_file', 'validate_aweme_id', 'validate_sec_user_id', 'setup_environment', 'get_current_timestamp', 'create_output_filename']
+__all__ = ['ConfigManager', 'LoggerManager', 'APIError', 'APIConnectionError', 'APIResponseError', 'APITimeoutError', 'APIUnavailableError', 'APIUnauthorizedError', 'APINotFoundError', 'APIRateLimitError', 'APIRetryExhaustedError', 'TokenManager', 'VerifyFpManager', 'XBogus', 'ABogus', 'BogusManager', 'BaseRequestModel', 'PostComments', 'UserProfile', 'BaseCrawler', 'DouyinWebCrawler', 'simplify_video_result', 'simplify_comment_result', 'save_json_file', 'validate_aweme_id', 'validate_sec_user_id', 'setup_environment', 'get_current_timestamp', 'create_output_filename']

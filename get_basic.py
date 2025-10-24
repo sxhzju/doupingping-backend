@@ -130,18 +130,17 @@ async def main():
             print(f"简化视频数据文件: {simplified_file}")
 
         if summary_data:
-            author_info = summary_data.get('author', {}) or {}
-            statistics = summary_data.get('statistics', {}) or {}
             print("")
             print("视频信息摘要 (Video Information Summary):")
-            print(f"  标题: {summary_data.get('title', 'N/A')}")
-            print(f"  作者昵称: {author_info.get('nickname', 'N/A')}")
-            print(f"  抖音号: {author_info.get('unique_id', 'N/A')}")
-            print(f"  发布时间: {summary_data.get('publish_time_utc8', 'N/A')}")
-            print(f"  播放次数: {statistics.get('play_count', 'N/A')}")
-            print(f"  点赞次数: {statistics.get('digg_count', 'N/A')}")
-            print(f"  评论次数: {statistics.get('comment_count', 'N/A')}")
-            print(f"  分享次数: {statistics.get('share_count', 'N/A')}")
+            print(f"  点赞次数: {summary_data.get('digg_count', 'N/A')}")
+            print(f"  评论次数: {summary_data.get('comment_count', 'N/A')}")
+            print(f"  分享次数: {summary_data.get('share_count', 'N/A')}")
+            print(f"  视频时长(ms): {summary_data.get('duration_ms', 'N/A')}")
+            print(f"  作者昵称: {summary_data.get('author_nickname', 'N/A')}")
+            print(f"  作者sec_uid: {summary_data.get('author_sec_uid', 'N/A')}")
+            print(f"  发布时间(UTC+8): {summary_data.get('publish_time_utc8', 'N/A')}")
+            print(f"  音频链接: {summary_data.get('audio_url') or 'N/A'}")
+            print(f"  视频标签: {summary_data.get('video_tag', 'N/A')}")
 
         return 0
 

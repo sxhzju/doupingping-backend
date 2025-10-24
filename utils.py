@@ -993,55 +993,38 @@ def simplify_video_result(result: dict) -> dict:
         if publish_timestamp:
             publish_time_str = datetime.datetime.fromtimestamp(publish_timestamp, tz=utc8_tz).strftime(TimezoneConstants.DATETIME_FORMAT)
 
-        response_timestamp_ms = result.get('extra', {}).get('now')
-        response_time_str = None
-        if response_timestamp_ms:
-            response_time_str = datetime.datetime.fromtimestamp(response_timestamp_ms / 1000, tz=utc8_tz).strftime(TimezoneConstants.DATETIME_FORMAT)
-
         author_info = aweme_detail.get('author') or {}
         stats_info = aweme_detail.get('statistics') or {}
         music_info = aweme_detail.get('music') or {}
-        video_info = aweme_detail.get('video') or {}
+ 
+        audio_url = None
+        play_url = music_info.get('play_url')
+        if isinstance(play_url, dict):
+            url_list = play_url.get('url_list')
+            if isinstance(url_list, list) and url_list:
+                audio_url = url_list[0]
 
-        cover_urls = []
-        cover_data = video_info.get('cover')
-        if isinstance(cover_data, dict):
-            cover_urls = cover_data.get('url_list', []) or []
-
-        music_cover_urls = []
-        music_cover_data = music_info.get('cover_medium')
-        if isinstance(music_cover_data, dict):
-            music_cover_urls = music_cover_data.get('url_list', []) or []
+        tags = aweme_detail.get('video_tag')
+        tag_string = None
+        if isinstance(tags, list) and tags:
+            sorted_tags = sorted(
+                (tag for tag in tags if isinstance(tag, dict)),
+                key=lambda tag: tag.get('level', 0),
+            )
+            tag_names = [tag.get('tag_name') for tag in sorted_tags if tag.get('tag_name')]
+            if tag_names:
+                tag_string = '-'.join(tag_names)
 
         return {
-            'aweme_id': aweme_detail.get('aweme_id'),
-            'title': aweme_detail.get('desc'),
-            'region': aweme_detail.get('region'),
+            'digg_count': stats_info.get('digg_count'),
+            'comment_count': stats_info.get('comment_count'),
+            'share_count': stats_info.get('share_count'),
             'duration_ms': aweme_detail.get('duration'),
-            'publish_time': publish_timestamp,
+            'author_nickname': author_info.get('nickname'),
+            'author_sec_uid': author_info.get('sec_uid'),
             'publish_time_utc8': publish_time_str,
-            'response_time': response_timestamp_ms,
-            'response_time_utc8': response_time_str,
-            'author': {
-                'nickname': author_info.get('nickname'),
-                'unique_id': author_info.get('unique_id'),
-                'sec_uid': author_info.get('sec_uid'),
-                'uid': author_info.get('uid'),
-            },
-            'statistics': {
-                'play_count': stats_info.get('play_count'),
-                'digg_count': stats_info.get('digg_count'),
-                'comment_count': stats_info.get('comment_count'),
-                'share_count': stats_info.get('share_count'),
-                'forward_count': stats_info.get('forward_count'),
-            },
-            'music': {
-                'title': music_info.get('title'),
-                'author': music_info.get('author'),
-                'cover_urls': music_cover_urls,
-            },
-            'cover_urls': cover_urls,
-            'share_url': aweme_detail.get('share_info', {}).get('share_url'),
+            'audio_url': audio_url,
+            'video_tag': tag_string,
         }
     except Exception as exc:
         logger = LoggerManager.setup_logger('DataProcessor')

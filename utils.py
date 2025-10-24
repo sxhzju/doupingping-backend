@@ -30,7 +30,7 @@ try:
 except ImportError:
     print('Error: gmssl is required but not installed.')
     print('Please install it using: pip install gmssl')
-from constants import APIEndpoints, DefaultConfig, ErrorCodes, SignatureConstants, LoggingConstants, TokenConstants, FilePaths, RegexPatterns, TimezoneConstants, DOUYIN_COOKIE, NetworkConfig, HeadersConfig, DeviceConfig, LoggingConfig, TokenConfig, SignatureConfig, OutputConfig, ErrorHandlingConfig, ValidationConfig
+from constants import APIEndpoints, DefaultConfig, ErrorCodes, SignatureConstants, LoggingConstants, TokenConstants, RegexPatterns, TimezoneConstants, DOUYIN_COOKIE, NetworkConfig, HeadersConfig, DeviceConfig, LoggingConfig, TokenConfig, SignatureConfig, OutputConfig, ErrorHandlingConfig, ValidationConfig
 
 class ConfigManager:
     _instance = None

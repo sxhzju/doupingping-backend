@@ -14,7 +14,7 @@ try:
         setup_environment,
         APIError,
     )
-    from constants import FilePaths, ErrorCodes
+    from constants import ErrorCodes
 except ImportError as e:
     print(f"Error: 无法导入必需的模块: {e}")
     print("请确保 utils.py 和 constants.py 文件在同一目录下")
@@ -71,7 +71,7 @@ class CommentsFetcher:
         simplified_file = None
         try:
             if save_original and output_config.get('save_original', True):
-                original_filename = output_config.get('comment_original_file', FilePaths.COMMENT_ORIGINAL_FILE)
+                original_filename = output_config.get('comment_original_file')
                 original_file = output_path / original_filename
                 save_json_file(
                     original_result,
@@ -81,7 +81,7 @@ class CommentsFetcher:
                 )
                 self.logger.info(f"原始评论数据已保存: {original_file}")
             if save_simplified and output_config.get('save_simplified', True):
-                simplified_filename = output_config.get('comment_simplified_file', FilePaths.COMMENT_SIMPLIFIED_FILE)
+                simplified_filename = output_config.get('comment_simplified_file')
                 simplified_file = output_path / simplified_filename
                 save_json_file(
                     simplified_result,
@@ -104,51 +104,44 @@ async def main():
     COUNT = 20
 
     fetcher = CommentsFetcher()
-    logger = fetcher.logger
+
     try:
-        logger.info(f"正在获取视频评论: {AWEME_ID}")
+        print(f"正在获取视频评论: https://www.douyin.com/video/{AWEME_ID}  CURSOR: {CURSOR} COUNT: {COUNT}")
+
         result = await fetcher.fetch_comments(AWEME_ID, CURSOR, COUNT)
         simplified_result = simplify_comment_result(result)
         original_file, simplified_file = fetcher.save_results(result, simplified_result)
 
-        summary_lines = ["任务完成! (Task completed!)"]
         if original_file:
-            summary_lines.append(f"原始数据文件: {original_file}")
+            print(f"原始数据文件: {original_file}")
         if simplified_file:
-            summary_lines.append(f"简化数据文件: {simplified_file}")
+            print(f"简化数据文件: {simplified_file}")
 
         total_comments = len(result.get('comments', []))
         has_more = result.get('has_more', False)
         next_cursor = result.get('cursor', 0)
-        summary_lines.append("")
-        summary_lines.append("统计信息 (Statistics):")
-        summary_lines.append(f"  获取评论数量: {total_comments}")
-        summary_lines.append(f"  是否有更多: {'是' if has_more else '否'}")
-        summary_lines.append(f"  下一页游标: {next_cursor}")
+        print("")
+        print("统计信息 (Statistics):")
+        print(f"  获取评论数量: {total_comments}")
+        print(f"  是否有更多: {'是' if has_more else '否'}")
+        print(f"  下一页游标: {next_cursor}")
         if has_more:
-            summary_lines.append("")
-            summary_lines.append("获取下一页 (To get the next page):")
-            summary_lines.append(
-                f"  请在 get_comments.py 脚本的 main 函数中，将 CURSOR 的值修改为 {next_cursor}，然后重新运行。"
-            )
+            print("")
+            print("获取下一页 (To get the next page):")
+            print(f"  请在 get_comments.py 脚本的 main 函数中，将 CURSOR 的值修改为 {next_cursor}，然后重新运行。")
 
-        for line in summary_lines:
-            if line:
-                logger.info(line)
-        print("\n".join(summary_lines))
         return 0
     except KeyboardInterrupt:
-        logger.warning("用户中断操作")
-        logger.warning("操作被用户中断 (Operation interrupted by user)")
+        fetcher.logger.warning("用户中断操作")
         return 1
     except ValueError as e:
-        logger.error(f"参数错误: {e}")
+        fetcher.logger.error(f"参数错误: {e}")
         return 1
     except APIError as e:
-        logger.error(f"API错误: {e.message}")
+        fetcher.logger.error(f"API错误: {e.message}")
         return 1
     except Exception as e:
-        logger.error(f"未知错误: {e}", exc_info=True)
+        fetcher.logger.error(f"未知错误: {e}", exc_info=True)
         return 1
 
 

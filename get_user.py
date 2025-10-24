@@ -160,10 +160,9 @@ async def main():
             return 1
 
     fetcher = UserProfileFetcher()
-    logger = fetcher.logger
 
     try:
-        logger.info(f"正在获取用户资料: {SEC_USER_ID}")
+        print(f"正在获取用户资料: {SEC_USER_ID}")
         result = await fetcher.fetch_user_profile(SEC_USER_ID)
         simplified_result = fetcher.simplify_user_profile(result)
 
@@ -197,16 +196,12 @@ async def main():
             summary_lines.append(f"  粉丝数: {summary_source.get('follower_count', 0)}")
             summary_lines.append(f"  获赞数: {summary_source.get('total_favorited', 0)}")
 
-        for line in summary_lines:
-            if line:
-                logger.info(line)
         print("\n".join(summary_lines))
 
         return 0
 
     except KeyboardInterrupt:
         logger.warning("用户中断操作")
-        logger.warning("操作被用户中断 (Operation interrupted by user)")
         return 1
 
     except ValueError as e:

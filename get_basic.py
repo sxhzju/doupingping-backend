@@ -15,7 +15,7 @@ try:
         setup_environment,
         APIError,
     )
-    from constants import ErrorCodes, FilePaths
+    from constants import ErrorCodes
 except ImportError as e:
     print(f"Error: 无法导入必需的模块: {e}")
     print("请确保 utils.py 和 constants.py 文件在同一目录下")
@@ -70,7 +70,7 @@ class VideoDetailFetcher:
         original_file = simplified_file = None
         try:
             if save_original and output_config.get('save_original', True) and original_result:
-                original_filename = output_config.get('video_original_file', FilePaths.VIDEO_ORIGINAL_FILE)
+                original_filename = output_config.get('video_original_file')
                 original_file = output_path / original_filename
                 save_json_file(
                     original_result,
@@ -85,7 +85,7 @@ class VideoDetailFetcher:
                 and output_config.get('save_simplified', True)
                 and simplified_result is not None
             ):
-                simplified_filename = output_config.get('video_simplified_file', FilePaths.VIDEO_SIMPLIFIED_FILE)
+                simplified_filename = output_config.get('video_simplified_file')
                 simplified_file = output_path / simplified_filename
                 save_json_file(
                     simplified_result,
@@ -108,73 +108,54 @@ class VideoDetailFetcher:
 async def main():
     """Run default video detail download."""
     AWEME_ID = "7372484719365098803"
-    SAVE_ORIGINAL = True
-    SAVE_SIMPLIFIED = True
 
     fetcher = VideoDetailFetcher()
-    logger = fetcher.logger
 
     try:
-        logger.info(f"正在获取视频信息: {AWEME_ID}")
-        logger.info(f"  页面链接: https://www.douyin.com/video/{AWEME_ID}")
+        print(f"正在获取视频信息: https://www.douyin.com/video/{AWEME_ID}")
 
         result = await fetcher.fetch_video_detail(AWEME_ID)
         simplified_result = simplify_video_result(result)
         summary_data = simplified_result
 
         original_file = simplified_file = None
-        if SAVE_ORIGINAL or (SAVE_SIMPLIFIED and simplified_result is not None):
-            original_file, simplified_file = fetcher.save_results(
-                original_result=result,
-                simplified_result=simplified_result,
-                save_original=SAVE_ORIGINAL,
-                save_simplified=SAVE_SIMPLIFIED and simplified_result is not None,
-            )
+        original_file, simplified_file = fetcher.save_results(
+            original_result=result,
+            simplified_result=simplified_result,
+        )
 
-        summary_lines = ["任务完成! (Task completed!)"]
         if original_file:
-            summary_lines.append(f"原始视频数据文件: {original_file}")
+            print(f"原始视频数据文件: {original_file}")
         if simplified_file:
-            summary_lines.append(f"简化视频数据文件: {simplified_file}")
+            print(f"简化视频数据文件: {simplified_file}")
 
         if summary_data:
             author_info = summary_data.get('author', {}) or {}
             statistics = summary_data.get('statistics', {}) or {}
-            summary_lines.append("")
-            summary_lines.append("视频信息摘要 (Video Information Summary):")
-            summary_lines.append(f"  标题: {summary_data.get('title', 'N/A')}")
-            summary_lines.append(f"  作者昵称: {author_info.get('nickname', 'N/A')}")
-            summary_lines.append(f"  抖音号: {author_info.get('unique_id', 'N/A')}")
-            publish_time = summary_data.get('publish_time_utc8')
-            if publish_time:
-                summary_lines.append(f"  发布时间(UTC+8): {publish_time}")
-            summary_lines.append(f"  播放次数: {statistics.get('play_count', 'N/A')}")
-            summary_lines.append(f"  点赞次数: {statistics.get('digg_count', 'N/A')}")
-            summary_lines.append(f"  评论次数: {statistics.get('comment_count', 'N/A')}")
-            summary_lines.append(f"  分享次数: {statistics.get('share_count', 'N/A')}")
-
-        for line in summary_lines:
-            if line:
-                logger.info(line)
-        print("\n".join(summary_lines))
+            print("")
+            print("视频信息摘要 (Video Information Summary):")
+            print(f"  标题: {summary_data.get('title', 'N/A')}")
+            print(f"  作者昵称: {author_info.get('nickname', 'N/A')}")
+            print(f"  抖音号: {author_info.get('unique_id', 'N/A')}")
+            print(f"  发布时间: {summary_data.get('publish_time_utc8', 'N/A')}")
+            print(f"  播放次数: {statistics.get('play_count', 'N/A')}")
+            print(f"  点赞次数: {statistics.get('digg_count', 'N/A')}")
+            print(f"  评论次数: {statistics.get('comment_count', 'N/A')}")
+            print(f"  分享次数: {statistics.get('share_count', 'N/A')}")
 
         return 0
 
     except KeyboardInterrupt:
-        fetcher.logger.info("用户中断操作")
-        fetcher.logger.info("操作被用户中断 (Operation interrupted by user)")
+        fetcher.logger.warning("用户中断操作")
         return 1
     except ValueError as e:
         fetcher.logger.error(f"参数错误: {e}")
-        fetcher.logger.info(f"参数错误: {e}")
         return 1
     except APIError as e:
         fetcher.logger.error(f"API错误: {e.message}")
-        fetcher.logger.info(f"API错误: {e.message}")
         return 1
     except Exception as e:
         fetcher.logger.error(f"未知错误: {e}", exc_info=True)
-        fetcher.logger.info(f"发生未知错误: {e}")
         return 1
 
 

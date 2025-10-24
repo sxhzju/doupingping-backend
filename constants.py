@@ -337,21 +337,6 @@ class TimezoneConstants:
     TIME_FORMAT = "%H:%M:%S"
 
 
-# ==================== 文件路径常量 (File Path Constants) ====================
-class FilePaths:
-    """文件路径常量类（兼容旧引用，复用 OutputConfig 配置）"""
-    
-    # 日志目录 (Log Directory)
-    DEFAULT_LOG_DIR = "logs"
-    
-    # 输出文件 (Output Files)
-    COMMENT_ORIGINAL_FILE = OutputConfig.COMMENT_ORIGINAL_FILE
-    COMMENT_SIMPLIFIED_FILE = OutputConfig.COMMENT_SIMPLIFIED_FILE
-    USER_ORIGINAL_FILE = OutputConfig.USER_ORIGINAL_FILE
-    USER_SIMPLIFIED_FILE = OutputConfig.USER_SIMPLIFIED_FILE
-    VIDEO_ORIGINAL_FILE = OutputConfig.VIDEO_ORIGINAL_FILE
-    VIDEO_SIMPLIFIED_FILE = OutputConfig.VIDEO_SIMPLIFIED_FILE
-
 
 # ==================== 默认配置常量 (Default Configuration Constants) ====================
 class DefaultConfig:

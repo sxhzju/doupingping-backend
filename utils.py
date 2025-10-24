@@ -76,6 +76,7 @@ class ConfigManager:
                 'endpoints': {
                     'post_comment': '/aweme/v1/web/comment/list/',
                     'user_detail': '/aweme/v1/web/user/profile/other/',
+                    'video_detail': '/aweme/v1/web/aweme/detail/',
                     'ms_token': APIEndpoints.MS_TOKEN_URL,
                     'ttwid': APIEndpoints.TTWID_URL,
                 },
@@ -414,8 +415,7 @@ class ABogus:
 
     @staticmethod
     def random_list(a: float=None, b=170, c=85, d=0, e=0, f=0, g=0) -> list:
-        import random as random_module
-        r = a or random_module.random() * 10000
+        r = a or random.random() * 10000
         v = [r, int(r) & 255, int(r) >> 8]
         s = v[1] & b | d
         v.append(s)
@@ -443,9 +443,8 @@ class ABogus:
         return self.rc4_encrypt(self.from_char_code(*a), 'y')
 
     def generate_string_2_list(self, url_params: str, method='GET', start_time=0, end_time=0) -> list:
-        import random as random_module
         start_time = start_time or int(time.time() * 1000)
-        end_time = end_time or start_time + random_module.randint(4, 8)
+        end_time = end_time or start_time + random.randint(4, 8)
         params_array = self.generate_params_code(url_params)
         method_array = self.generate_method_code(method)
         return self.list_4(end_time >> 24 & 255, params_array[21], self.ua_code[23], end_time >> 16 & 255, params_array[22], self.ua_code[24], end_time >> 8 & 255, end_time >> 0 & 255, start_time >> 24 & 255, start_time >> 16 & 255, start_time >> 8 & 255, start_time >> 0 & 255, method_array[21], method_array[22], int(end_time / 256 / 256 / 256 / 256) >> 0, int(start_time / 256 / 256 / 256 / 256) >> 0, self.browser_len)
@@ -776,6 +775,9 @@ class PostComments(BaseRequestModel):
     cut_version: int = 1
     rcFT: str = ''
 
+class VideoDetailRequest(BaseRequestModel):
+    aweme_id: str
+
 class UserProfile(BaseRequestModel):
     sec_user_id: str
 
@@ -945,7 +947,7 @@ class DouyinWebCrawler:
             api_domain = self.config_manager.get_config_value('api.douyin_domain', APIEndpoints.DOUYIN_DOMAIN)
             comment_endpoint = self.config_manager.get_config_value('api.endpoints.post_comment', '/aweme/v1/web/comment/list/')
             base_endpoint = api_domain + comment_endpoint
-            endpoint = BogusManager.xb_model_2_endpoint(base_endpoint, params.dict(), kwargs['headers']['User-Agent'])
+            endpoint = BogusManager.xb_model_2_endpoint(base_endpoint, params.model_dump(), kwargs['headers']['User-Agent'])
             self.logger.info(f'获取视频评论: aweme_id={aweme_id}, cursor={cursor}, count={count}')
             response = await crawler.fetch_get_json(endpoint)
         return response
@@ -958,7 +960,7 @@ class DouyinWebCrawler:
             api_domain = self.config_manager.get_config_value('api.douyin_domain', APIEndpoints.DOUYIN_DOMAIN)
             user_endpoint = self.config_manager.get_config_value('api.endpoints.user_detail', '/aweme/v1/web/user/profile/other/')
             base_endpoint = api_domain + user_endpoint
-            endpoint = BogusManager.xb_model_2_endpoint(base_endpoint, params.dict(), kwargs['headers']['User-Agent'])
+            endpoint = BogusManager.xb_model_2_endpoint(base_endpoint, params.model_dump(), kwargs['headers']['User-Agent'])
             self.logger.info(f'获取用户资料: sec_user_id={sec_user_id}')
             response = await crawler.fetch_get_json(endpoint)
         return response
@@ -967,25 +969,16 @@ class DouyinWebCrawler:
         kwargs = self.get_douyin_headers()
         base_crawler = BaseCrawler(proxies=kwargs['proxies'], crawler_headers=kwargs['headers'])
         async with base_crawler as crawler:
-            from urllib.parse import urlencode
-            from constants import DeviceConfig, APIEndpoints
-            headers = kwargs['headers']
-            params = DeviceConfig.get_device_info()
-            params['aweme_id'] = aweme_id
-
-            # The endpoint for video details
-            endpoint = "https://www.douyin.com/aweme/v1/web/aweme/detail/"
-
-            # Generate the a_bogus signature using BogusManager from utils.py
-            # The ab_model_2_endpoint in utils.py handles the full logic including URL encoding
-            a_bogus = BogusManager.ab_model_2_endpoint(params, headers["User-Agent"])
-
-            # Construct the final URL
-            query_string = urlencode(params)
-            full_url = f"{endpoint}?{query_string}&a_bogus={a_bogus}"
-            
+            params = VideoDetailRequest(aweme_id=aweme_id)
+            api_domain = self.config_manager.get_config_value('api.douyin_domain', APIEndpoints.DOUYIN_DOMAIN)
+            video_endpoint = self.config_manager.get_config_value('api.endpoints.video_detail', '/aweme/v1/web/aweme/detail/')
+            base_endpoint = api_domain + video_endpoint
+            params_dict = params.model_dump()
+            a_bogus = BogusManager.ab_model_2_endpoint(params_dict, kwargs['headers']['User-Agent'])
+            query_string = urlencode(params_dict)
+            endpoint = f'{base_endpoint}?{query_string}&a_bogus={a_bogus}'
             self.logger.info(f'获取视频数据: aweme_id={aweme_id}')
-            response = await crawler.fetch_get_json(full_url)
+            response = await crawler.fetch_get_json(endpoint)
         return response
 
 def simplify_video_result(result: dict) -> dict:
@@ -1114,4 +1107,4 @@ def create_output_filename(base_name: str, extension: str='json', add_timestamp:
         return f'{base_name}_{timestamp}.{extension}'
     else:
         return f'{base_name}.{extension}'
-__all__ = ['ConfigManager', 'LoggerManager', 'APIError', 'APIConnectionError', 'APIResponseError', 'APITimeoutError', 'APIUnavailableError', 'APIUnauthorizedError', 'APINotFoundError', 'APIRateLimitError', 'APIRetryExhaustedError', 'TokenManager', 'VerifyFpManager', 'XBogus', 'ABogus', 'BogusManager', 'BaseRequestModel', 'PostComments', 'UserProfile', 'BaseCrawler', 'DouyinWebCrawler', 'simplify_video_result', 'simplify_comment_result', 'save_json_file', 'validate_aweme_id', 'validate_sec_user_id', 'setup_environment', 'get_current_timestamp', 'create_output_filename']
+__all__ = ['ConfigManager', 'LoggerManager', 'APIError', 'APIConnectionError', 'APIResponseError', 'APITimeoutError', 'APIUnavailableError', 'APIUnauthorizedError', 'APINotFoundError', 'APIRateLimitError', 'APIRetryExhaustedError', 'TokenManager', 'VerifyFpManager', 'XBogus', 'ABogus', 'BogusManager', 'BaseRequestModel', 'PostComments', 'VideoDetailRequest', 'UserProfile', 'BaseCrawler', 'DouyinWebCrawler', 'simplify_video_result', 'simplify_comment_result', 'save_json_file', 'validate_aweme_id', 'validate_sec_user_id', 'setup_environment', 'get_current_timestamp', 'create_output_filename']
